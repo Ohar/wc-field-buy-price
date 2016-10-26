@@ -45,10 +45,7 @@ function add_custom_woocommerce_general_field_buy_price() {
 }
 
 function save_custom_woocommerce_general_field_buy_price( $post_id ) {
-	$buy_price = $_POST['buy_price'];
-	if (!empty( $buy_price ) ) {
-		update_post_meta( $post_id, 'buy_price', esc_attr( $buy_price ) );
-	}
+	update_post_meta( $post_id, 'buy_price', esc_attr( $_POST['buy_price'] ) );
 }
 
 add_action( 'plugins_loaded', 'load_wc_field_buy_price_textdomain' );
