@@ -6,7 +6,7 @@ Description:  Add custom field “buy_price” to the WooCommerce products
 Author: Pavel Lysenko aka Ohar
 Author URI: http://ohar.name/
 Contributors: ohar
-Version: 1.0.2
+Version: 1.0.3
 License: MIT
 Text Domain: wc-field-buy-price
 Domain Path: /languages
