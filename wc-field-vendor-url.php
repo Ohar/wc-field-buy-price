@@ -31,6 +31,7 @@ function add_custom_woocommerce_general_field_buy_price() {
 			'id'                => 'buy_price',
 			'label'             => __( 'Buy Price', 'wc-field-buy-price' ),
 			'placeholder'       => '0',
+			'desc_tip'          => 'true',
 			'description'       => __( 'Price of buying product from vendor', 'wc-field-buy-price' ),
 			'type'              => 'number',
 			'custom_attributes' => array(
