@@ -6,7 +6,7 @@ Description:  Add custom field “buy_price” to the WooCommerce products
 Author: Pavel Lysenko aka Ohar
 Author URI: http://ohar.name/
 Contributors: ohar
-Version: 1.0.4
+Version: 1.0.5
 License: MIT
 Text Domain: wc-field-buy-price
 Domain Path: /languages
@@ -64,6 +64,63 @@ add_action( 'plugins_loaded', 'load_wc_field_buy_price_textdomain' );
 
 function load_wc_field_buy_price_textdomain() {
 	load_plugin_textdomain( 'wc-field-buy-price', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+}
+
+
+
+
+// BULK EDIT
+
+// Add field to the bulk edit
+add_action( 'woocommerce_product_bulk_edit_start', 'product_bulk_edit_add_field_buy_price' );
+
+function product_bulk_edit_add_field_buy_price() { ?>
+	<div class="inline-edit-group">
+			<label class="alignleft">
+				<span class="title"><?php _e( 'Buy Price', 'wc-field-buy-price' ); ?></span>
+				<span class="input-text-wrap">
+					<select class="change_buy_price change_to" name="change_buy_price">
+					<?php
+						$options = array(
+							'' 	=> __( '— No change —', 'woocommerce' ),
+							'1' => __( 'Change to:', 'woocommerce' ),
+							'2' => __( 'Increase by (fixed amount or %):', 'woocommerce' ),
+							'3' => __( 'Decrease by (fixed amount or %):', 'woocommerce' ),
+						);
+						foreach ( $options as $key => $value ) {
+							echo '<option value="' . esc_attr( $key ) . '">' . $value . '</option>';
+						}
+					?>
+					</select>
+				</span>
+			</label>
+			<label class="change-input">
+				<input type="text" name="buy_price" class="text buy_price" placeholder="<?php echo __( 'Price of buying product from vendor', 'wc-field-buy-price'); ?>" value="" />
+				<?php echo get_woocommerce_currency_symbol(); ?>
+			</label>
+	</div>
+
+	<style>
+	 #woocommerce-fields-bulk.inline-edit-col .buy_price {
+    box-sizing: border-box;
+    width: calc(100% - 1rem);
+    margin-left: 0;
+	}
+	</style>
+	<?
+}
+
+// Save field to the bulk edit
+add_action( 'woocommerce_product_bulk_edit_save', 'product_bulk_edit_save_field_buy_price', 10, 1);
+
+function product_bulk_edit_save_field_buy_price($product) {
+	if ($product->is_type('simple')) {
+		$post_id = $product->id;
+		if ( isset( $_REQUEST['buy_price'] ) ) {
+			$customFieldDemo = trim(esc_attr( $_REQUEST['buy_price'] ));
+			update_post_meta( $post_id, 'buy_price', wc_clean( $customFieldDemo ) );
+		}
+	}
 }
 
 
