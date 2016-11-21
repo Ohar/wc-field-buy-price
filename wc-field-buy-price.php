@@ -6,7 +6,7 @@ Description:  Add custom field “buy_price” to the WooCommerce products
 Author: Pavel Lysenko aka Ohar
 Author URI: http://ohar.name/
 Contributors: ohar
-Version: 1.0.5
+Version: 1.1.0
 License: MIT
 Text Domain: wc-field-buy-price
 Domain Path: /languages
@@ -99,7 +99,7 @@ function product_bulk_edit_add_field_buy_price() { ?>
 				<?php echo get_woocommerce_currency_symbol(); ?>
 			</label>
 	</div>
-
+	
 	<style>
 	 #woocommerce-fields-bulk.inline-edit-col .buy_price {
     box-sizing: border-box;
@@ -116,14 +116,47 @@ add_action( 'woocommerce_product_bulk_edit_save', 'product_bulk_edit_save_field_
 function product_bulk_edit_save_field_buy_price($product) {
 	if ($product->is_type('simple')) {
 		$post_id = $product->id;
-		if ( isset( $_REQUEST['buy_price'] ) ) {
-			$customFieldDemo = trim(esc_attr( $_REQUEST['buy_price'] ));
-			update_post_meta( $post_id, 'buy_price', wc_clean( $customFieldDemo ) );
+		
+		if ( isset( $_REQUEST['buy_price'] ) &&  isset( $_REQUEST['change_buy_price'] )) {
+			$buy_price_input = trim(esc_attr( $_REQUEST['buy_price'] ));
+			$change_buy_price = trim(esc_attr( $_REQUEST['change_buy_price'] ));
+			$old_buy_price = get_post_meta($post_id, 'buy_price', true); 
+			
+			switch ( $change_buy_price ) {
+				case '1' :
+						$new_buy_price = $buy_price_input;
+						break;
+				case '2' :
+						if (strpos($buy_price_input, '%') === false) {
+							$new_buy_price = $old_buy_price + $buy_price_input;
+						} else {
+							$num = get_numerics($buy_price_input);
+							$new_buy_price = $old_buy_price * (1 + $num / 100);
+						}
+						break;
+						
+				case '3' :
+						if (strpos($buy_price_input, '%') === false) {
+							$new_buy_price = $old_buy_price - $buy_price_input;
+						} else {
+							$num = get_numerics($buy_price_input);
+							$new_buy_price = $old_buy_price * (1 - $num / 100);
+						}
+						break;
+
+				default :
+						break;
+			}
+			
+			update_post_meta( $post_id, 'buy_price', wc_clean( $new_buy_price ) );
 		}
 	}
 }
 
-
+function get_numerics ($str) {
+    preg_match_all('/\d+/', $str, $matches);
+    return implode('', $matches[0]);
+}
 
 
 // QUICK EDIT
