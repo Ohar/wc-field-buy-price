@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 Plugin Name: WooCommerce field buy price
 Plugin URI: https://github.com/Ohar/wc-field-buy-price
@@ -6,7 +6,7 @@ Description:  Add custom field “buy_price” to the WooCommerce products
 Author: Pavel Lysenko aka Ohar
 Author URI: http://ohar.name/
 Contributors: ohar
-Version: 1.1.1
+Version: 1.1.0
 License: MIT
 Text Domain: wc-field-buy-price
 Domain Path: /languages
@@ -77,10 +77,10 @@ add_action( 'woocommerce_product_bulk_edit_start', 'product_bulk_edit_add_field_
 function product_bulk_edit_add_field_buy_price() { ?>
 	<div class="inline-edit-group">
 			<label class="alignleft">
-				<span class="title"><? _e( 'Buy Price', 'wc-field-buy-price' ); ?></span>
+				<span class="title"><?php _e( 'Buy Price', 'wc-field-buy-price' ); ?></span>
 				<span class="input-text-wrap">
 					<select class="change_buy_price change_to" name="change_buy_price">
-					<?
+					<?php
 						$options = array(
 							'' 	=> __( '— No change —', 'woocommerce' ),
 							'1' => __( 'Change to:', 'woocommerce' ),
@@ -95,8 +95,8 @@ function product_bulk_edit_add_field_buy_price() { ?>
 				</span>
 			</label>
 			<label class="change-input">
-				<input type="text" name="buy_price" class="text buy_price" placeholder="<?=__( 'Price of buying product from vendor', 'wc-field-buy-price')?>" value="" />
-				<? echo get_woocommerce_currency_symbol(); ?>
+				<input type="text" name="buy_price" class="text buy_price" placeholder="<?php echo __( 'Price of buying product from vendor', 'wc-field-buy-price'); ?>" value="" />
+				<?php echo get_woocommerce_currency_symbol(); ?>
 			</label>
 	</div>
 	
@@ -121,12 +121,10 @@ function product_bulk_edit_save_field_buy_price($product) {
 			$buy_price_input = trim(esc_attr( $_REQUEST['buy_price'] ));
 			$change_buy_price = trim(esc_attr( $_REQUEST['change_buy_price'] ));
 			$old_buy_price = get_post_meta($post_id, 'buy_price', true); 
-			$new_buy_price = $buy_price_input;
 			
 			switch ( $change_buy_price ) {
 				case '1' :
 						$new_buy_price = $buy_price_input;
-						update_post_meta( $post_id, 'buy_price', wc_clean( $new_buy_price ) );
 						break;
 				case '2' :
 						if (strpos($buy_price_input, '%') === false) {
@@ -135,7 +133,6 @@ function product_bulk_edit_save_field_buy_price($product) {
 							$num = get_numerics($buy_price_input);
 							$new_buy_price = $old_buy_price * (1 + $num / 100);
 						}
-						update_post_meta( $post_id, 'buy_price', wc_clean( $new_buy_price ) );
 						break;
 						
 				case '3' :
@@ -145,12 +142,13 @@ function product_bulk_edit_save_field_buy_price($product) {
 							$num = get_numerics($buy_price_input);
 							$new_buy_price = $old_buy_price * (1 - $num / 100);
 						}
-						update_post_meta( $post_id, 'buy_price', wc_clean( $new_buy_price ) );
 						break;
 
 				default :
 						break;
 			}
+			
+			update_post_meta( $post_id, 'buy_price', wc_clean( $new_buy_price ) );
 		}
 	}
 }
@@ -169,9 +167,9 @@ add_action( 'woocommerce_product_quick_edit_start', 'product_quick_edit_add_fiel
 function product_quick_edit_add_field_buy_price() { ?>
 		<div class="buy_price_block">
 			<label class="alignleft">
-					<span class="title"><? _e('Buy Price', 'wc-field-buy-price' ); ?></span>
+					<span class="title"><?php _e('Buy Price', 'wc-field-buy-price' ); ?></span>
 					<span class="input-text-wrap">
-						<input type="text" name="buy_price" class="text buy_price" placeholder="<? _e( 'Price of buying product from vendor', 'wc-field-buy-price' ); ?>" value="">
+						<input type="text" name="buy_price" class="text buy_price" placeholder="<?php _e( 'Price of buying product from vendor', 'wc-field-buy-price' ); ?>" value="">
 					</span>
 			</label>
 		</div>
@@ -213,7 +211,7 @@ function product_quick_edit_add_field_buy_price() { ?>
 		
 		</script>
 		
-    <?
+    <?php
 }
 
 // Save field to the quick edit
@@ -236,10 +234,10 @@ add_action( 'manage_product_posts_custom_column', 'product_quick_edit_show_field
 function product_quick_edit_show_field_buy_price($column,$post_id) {
 	switch ( $column ) {
 		case 'name' : ?>
-				<div class="hidden buy_price_inline" id="buy_price_inline_<? echo $post_id; ?>">
-						<div id="buy_price"><? echo get_post_meta($post_id, 'buy_price', true); ?></div>
+				<div class="hidden buy_price_inline" id="buy_price_inline_<?php echo $post_id; ?>">
+						<div id="buy_price"><?php echo get_post_meta($post_id, 'buy_price', true); ?></div>
 				</div>
-				<?
+				<?php
 
 				break;
 
